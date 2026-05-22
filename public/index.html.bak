@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ElevApp</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="card">
+      <h1>ElevApp</h1>
+
+      <input type="text" placeholder="Elevnr">
+      <input type="text" placeholder="Fornavn">
+      <input type="text" placeholder="Efternavn">
+
+      <button>Gem elev</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

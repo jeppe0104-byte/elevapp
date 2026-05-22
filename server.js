@@ -1,0 +1,75 @@
+const express = require("express");
+const path = require("path");
+const sqlite3 = require("sqlite3").verbose();
+
+const app = express();
+const PORT = 3000;
+
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "public")));
+
+const db = new sqlite3.Database("elevapp.db");
+
+db.run(`
+  CREATE TABLE IF NOT EXISTS elever (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    elevnr TEXT,
+    fornavn TEXT,
+    efternavn TEXT
+  )
+`);
+
+app.get("/api/elever", (req, res) => {
+  db.all("SELECT * FROM elever ORDER BY id DESC", [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ fejl: "Kunne ikke hente elever" });
+      return;
+    }
+
+    res.json(rows);
+  });
+});
+
+app.post("/api/elever", (req, res) => {
+  const { elevnr, fornavn, efternavn } = req.body;
+
+  db.run(
+    "INSERT INTO elever (elevnr, fornavn, efternavn) VALUES (?, ?, ?)",
+    [elevnr, fornavn, efternavn],
+    function (err) {
+      if (err) {
+        res.status(500).json({ fejl: "Kunne ikke gemme elev" });
+        return;
+      }
+
+      res.json({ id: this.lastID, elevnr, fornavn, efternavn });
+    }
+  );
+});
+
+app.delete("/api/elever/:id", (req, res) => {
+
+  const id = req.params.id;
+
+  db.run(
+    "DELETE FROM elever WHERE id = ?",
+    [id],
+    function(err) {
+
+      if (err) {
+        res.status(500).json({
+          fejl: "Kunne ikke slette elev"
+        });
+        return;
+      }
+
+      res.json({
+        succes: true
+      });
+    }
+  );
+});
+
+app.listen(PORT, () => {
+  console.log(`Server kører på http://localhost:${PORT}`);
+});
